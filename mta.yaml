@@ -1,0 +1,93 @@
+_schema-version: "3.2"
+ID: testnav1
+description: test of navivigation origin
+version: 0.0.1
+modules:
+- name: testnav1-dest-content
+  type: com.sap.application.content
+  requires:
+  - name: testnav1-dest-srv
+    parameters:
+      content-target: true
+  - name: testnav1-repo-host
+    parameters:
+      service-key:
+        name: testnav1-repo-host-key
+  - name: testnav1-uaa
+    parameters:
+      service-key:
+        name: testnav1-uaa-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: testnav1_repo_host
+          ServiceInstanceName: testnav1-html5-srv
+          ServiceKeyName: testnav1-repo-host-key
+          sap.cloud.service: testnav1
+        - Authentication: OAuth2UserTokenExchange
+          Name: testnav1_uaa
+          ServiceInstanceName: testnav1-xsuaa-srv
+          ServiceKeyName: testnav1-uaa-key
+          sap.cloud.service: testnav1
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+- name: testnav1-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: testnav1-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - comtasamodule1.zip
+      name: comtasamodule1
+      target-path: resources/
+- name: comtasamodule1
+  type: html5
+  path: module1
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: testnav1-uaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: testnav1-xsuaa-srv
+    service-plan: application
+- name: testnav1-dest-srv
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: testnav1-dest-srv
+    service-plan: lite
+- name: testnav1-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: testnav1-html5-srv
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo

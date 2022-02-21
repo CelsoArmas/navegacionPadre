@@ -1,0 +1,51 @@
+<mvc:View xmlns:table="sap.ui.table"
+    controllerName="com.tasa.module1.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+>
+    <Shell id="shell">
+        <App id="app">
+            <pages>
+                <Page id="page" title="{i18n>title}">
+                    <content >
+                        <table:Table 
+                            rows="{
+                                path:'/lista'
+                            }">
+                            <table:columns>
+                                <table:Column >
+                                    <Label text="Nombre" />
+                                    <table:template>
+                                        <Text text="{name}" />
+                                    </table:template>
+                                </table:Column>
+                                <table:Column >
+                                    <Label text="Codigo" />
+                                    <table:template>
+                                        <ObjectStatus 
+                                            text="{dni}"
+                                            state="Information"
+                                            active="true"
+                                            press="onPress"/>
+                                    </table:template>
+                                </table:Column>
+                            </table:columns>
+                        </table:Table>
+                        <!-- <List 
+                            items = "{
+                                path:'/lista'
+                            }">
+                            <items>
+                                <StandardListItem 
+                                    title="{name}"
+                                    info="{dni}"
+                                    press="onPress" />
+                            </items>
+                        </List> -->
+                    </content >
+                </Page>
+            </pages>
+        </App>
+    </Shell>
+</mvc:View>
